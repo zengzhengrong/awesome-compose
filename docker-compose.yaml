@@ -1,0 +1,40 @@
+version: '3'
+services:
+  db:
+    container_name: mysql-container
+    image: mysql:5.7
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: forum
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: zzradmin
+      TZ: "Asia/Shanghai"
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+  redis:
+    container_name: redis-container
+    image: redis
+    restart: always
+    command: redis-server /etc/redis/redis.conf --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/etc/redis/redis.conf
+      - redis_data:/data
+  phpmyadmin:
+    container_name: phpmyadmin-container
+    image: phpmyadmin/phpmyadmin
+    restart: unless-stopped
+    environment:
+      TZ: "Asia/Shanghai"
+    ports:
+      - "8000:80"
+    depends_on:
+      - db
+volumes:
+  db_data:
+  redis_data:
